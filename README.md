@@ -334,4 +334,4 @@ For issues or questions:
 
 ---
 
-**Note:** This is an MVP (Minimum Viable Product) designed to demonstrate multi-agent AI system design. It runs completely locally and uses free-tier APIs. Perfect for learning, experimentation, and portfolio projects.
+**Note:** This is an MVP (Minimum Viable Product) designed to demonstrate multi-agent AI system design. It runs completely locally and uses free-tier APIs.
