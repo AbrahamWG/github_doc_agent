@@ -4,7 +4,7 @@ A multi-agent AI system that automatically generates adaptive, multi-level docum
 
 ## 📺 Video Demo
 
-**[Watch the Full Demo on YouTube](https://www.youtube.com/watch?v=XXXrGy6r0c8&feature=youtu.be)**
+[![Watch the Full Demo](https://img.youtube.com/vi/XXXrGy6r0c8/0.jpg)](https://www.youtube.com/watch?v=XXXrGy6r0c8)
 
 See the system in action: generating documentation for Express.js, exploring the three levels (Beginner/Intermediate/Advanced), and showcasing the dark mode feature!
 
