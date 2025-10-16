@@ -8,22 +8,22 @@ Smart Documentation Agent is a multi-agent system that generates adaptive docume
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      Frontend (React)                        │
-│  - User interface for input and documentation display        │
-│  - Handles state management and API communication            │
+│                      Frontend (React)                       │
+│  - User interface for input and documentation display       │
+│  - Handles state management and API communication           │
 └───────────────────────────┬─────────────────────────────────┘
                             │ HTTP/REST
 ┌───────────────────────────▼─────────────────────────────────┐
-│                    Backend (FastAPI)                         │
-│  - Request validation and routing                            │
-│  - Error handling and response formatting                    │
+│                    Backend (FastAPI)                        │
+│  - Request validation and routing                           │
+│  - Error handling and response formatting                   │
 └───────────────────────────┬─────────────────────────────────┘
                             │
 ┌───────────────────────────▼─────────────────────────────────┐
-│              Agent Orchestrator                              │
-│  - Coordinates agent execution flow                          │
-│  - Manages parallel processing                               │
-│  - Handles error recovery                                    │
+│              Agent Orchestrator                             │
+│  - Coordinates agent execution flow                         │
+│  - Manages parallel processing                              │
+│  - Handles error recovery                                   │
 └──┬────────────────────────┬─────────────────────────────┬───┘
    │                        │                             │
 ┌──▼──────────┐   ┌────────▼──────────┐   ┌─────────────▼───┐
@@ -38,12 +38,12 @@ Smart Documentation Agent is a multi-agent system that generates adaptive docume
    └───────────────────────┼────────────────────────────┘
                            │
 ┌──────────────────────────▼──────────────────────────────────┐
-│                    MCP Servers (Tools)                       │
-│  ┌────────────┐                                              │
-│  │ GitHub MCP │    - Repository access                       │
-│  │            │    - File content fetching                   │
-│  │            │    - README extraction                       │
-│  └────────────┘                                              │
+│                    MCP Servers (Tools)                      │
+│  ┌────────────┐                                             │
+│  │ GitHub MCP │    - Repository access                      │
+│  │            │    - File content fetching                  │
+│  │            │    - README extraction                      │
+│  └────────────┘                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
