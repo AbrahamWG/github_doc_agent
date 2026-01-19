@@ -4,7 +4,7 @@ A multi-agent AI system that automatically generates adaptive, multi-level docum
 
 ## 📺 Video Demo
 
-[![Watch the Full Demo](https://img.youtube.com/vi/XXXrGy6r0c8/0.jpg)](https://www.youtube.com/watch?v=XXXrGy6r0c8)
+**[Watch the Full Demo on YouTube](https://www.youtube.com/watch?v=XXXrGy6r0c8&feature=youtu.be)**
 
 See the system in action: generating documentation for Express.js, exploring the three levels (Beginner/Intermediate/Advanced), and showcasing the dark mode feature!
 
@@ -50,7 +50,12 @@ Frontend (React) → Backend (FastAPI) → Agent Orchestrator
 2. **Context Gatherer Agent:** Retrieves documentation standards and best practices
 3. **Documentation Generator Agent:** Generates three levels of documentation in parallel
 
-See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed system design.
+### Design Patterns
+
+- **Orchestrator Pattern:** Central coordinator manages agent lifecycle
+- **MCP Pattern:** External services abstracted as "servers" for flexibility
+- **Parallel Execution:** Agents 1 & 2 run simultaneously for speed
+- **Error Isolation:** Agent failures don't crash the system
 
 ## Quick Start
 
@@ -60,14 +65,20 @@ See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed system design.
 - Node.js 18+
 - Gemini API Key (free from [Google AI Studio](https://aistudio.google.com/apikey))
 
-### 1. Clone the Repository
+### 1. Clone and Setup
 
 ```bash
 git clone https://github.com/yourusername/github_doc_agent.git
 cd github_doc_agent
 ```
 
-### 2. Backend Setup
+### 2. Get Your API Key
+
+1. Visit https://aistudio.google.com/apikey
+2. Click "Create API Key"
+3. Copy the key (starts with `AI...`)
+
+### 3. Backend Setup
 
 ```bash
 cd backend
@@ -77,22 +88,17 @@ pip install -r requirements.txt
 
 # Create .env file
 cp .env.example .env
-# Edit .env and add your GEMINI_API_KEY
+# Edit .env and add: GEMINI_API_KEY=your_key_here
 ```
-
-**Get your Gemini API key:**
-1. Visit https://aistudio.google.com/apikey
-2. Click "Create API Key"
-3. Copy and paste into `backend/.env`
 
 ```bash
 # Run the backend
 python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-Backend will be available at http://localhost:8000
+Backend available at http://localhost:8000
 
-### 3. Frontend Setup
+### 4. Frontend Setup
 
 In a new terminal:
 
@@ -102,9 +108,9 @@ npm install
 npm run dev
 ```
 
-Frontend will be available at http://localhost:5173
+Frontend available at http://localhost:5173
 
-### 4. Try It Out
+### 5. Try It Out
 
 1. Open http://localhost:5173
 2. Enter a GitHub repository URL (e.g., `https://github.com/expressjs/express`)
@@ -129,44 +135,80 @@ curl -X POST http://localhost:8000/api/v1/generate \
   -d '{"repo_url": "https://github.com/expressjs/express"}'
 ```
 
-See [API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md) for full API reference.
-
-## Documentation
-
-- [SETUP.md](docs/SETUP.md) - Detailed setup instructions
-- [ARCHITECTURE.md](docs/ARCHITECTURE.md) - System architecture and design
-- [API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md) - API endpoints and usage
-- [COMMON_PITFALLS.md](docs/COMMON_PITFALLS.md) - Troubleshooting guide
-
-## Project Structure
-
+**Response:**
+```json
+{
+  "success": true,
+  "repo_name": "express",
+  "documentation": {
+    "beginner": "# Beginner Documentation\n\n...",
+    "intermediate": "# Intermediate Documentation\n\n...",
+    "advanced": "# Advanced Documentation\n\n..."
+  },
+  "metadata": {
+    "analysis": { ... },
+    "rate_limit_remaining": 4998
+  }
+}
 ```
-github_doc_agent/
-├── backend/                    # FastAPI backend
-│   ├── app/
-│   │   ├── agents/            # Three AI agents
-│   │   │   ├── code_analyzer.py
-│   │   │   ├── context_gatherer.py
-│   │   │   ├── doc_generator.py
-│   │   │   └── orchestrator.py
-│   │   ├── mcp_servers/       # MCP servers (GitHub integration)
-│   │   ├── models/            # Pydantic models
-│   │   ├── routes/            # API routes
-│   │   └── main.py            # FastAPI app
-│   ├── requirements.txt
-│   └── .env.example
-│
-├── frontend/                   # React frontend
-│   ├── src/
-│   │   ├── components/        # React components
-│   │   ├── services/          # API client
-│   │   └── App.jsx
-│   ├── package.json
-│   └── vite.config.js
-│
-├── docs/                       # Documentation
-└── docker-compose.yml          # Docker setup
+
+### Interactive API Docs
+
+FastAPI provides automatic interactive documentation:
+- **Swagger UI:** http://localhost:8000/docs
+- **ReDoc:** http://localhost:8000/redoc
+
+## API Reference
+
+### Endpoints
+
+#### Generate Documentation
+- **POST** `/api/v1/generate`
+- **Body:** `{"repo_url": "https://github.com/owner/repo"}`
+- **Response:** Documentation object with beginner, intermediate, and advanced levels
+
+#### Health Check
+- **GET** `/api/v1/health`
+- **Response:** `{"status": "healthy", "service": "smart-docs-agent"}`
+
+### Rate Limits
+
+- **GitHub (no token):** 60 requests/hour
+- **GitHub (with token):** 5,000 requests/hour
+- Response includes `rate_limit_remaining` in metadata
+
+## Configuration
+
+### Environment Variables
+
+Create `backend/.env`:
+
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+GITHUB_TOKEN=optional_for_private_repos
+ENVIRONMENT=development
+FRONTEND_URL=http://localhost:5173
+BACKEND_PORT=8000
 ```
+
+**GitHub Token (Optional):**
+- Only needed for private repos or higher rate limits
+- Generate at: https://github.com/settings/tokens
+- Increases limit from 60/hour to 5,000/hour
+
+## Docker Deployment
+
+```bash
+# Set environment variables
+export GEMINI_API_KEY=your_key_here
+export GITHUB_TOKEN=your_token_here  # Optional
+
+# Start services
+docker-compose up --build
+```
+
+- Backend: http://localhost:8000
+- Frontend: http://localhost:5173
 
 ## Technology Stack
 
@@ -186,37 +228,68 @@ github_doc_agent/
 - **Docker** - Containerization
 - **Docker Compose** - Multi-container orchestration
 
-## Configuration
+## Troubleshooting
 
-### Environment Variables
+### "GitHub API rate limit exceeded"
+- Add a GitHub token to `.env` for 5000 requests/hour
+- Generate at: https://github.com/settings/tokens
 
-Create `backend/.env`:
+### "Backend is not reachable"
+- Verify backend is running: `curl http://localhost:8000/api/v1/health`
+- Check that port 8000 is not in use
 
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
-GITHUB_TOKEN=optional_for_private_repos
-ENVIRONMENT=development
-FRONTEND_URL=http://localhost:5173
-BACKEND_PORT=8000
-```
+### "Invalid API Key"
+- Verify `GEMINI_API_KEY` in `backend/.env`
+- Test at https://aistudio.google.com/apikey
 
-See [SETUP.md](docs/SETUP.md) for detailed configuration options.
-
-## Docker Deployment
-
-Run with Docker Compose:
-
+### Module Import Errors
 ```bash
-# Set environment variables
-export GEMINI_API_KEY=your_key_here
-export GITHUB_TOKEN=your_token_here  # Optional
-
-# Start services
-docker-compose up --build
+# Make sure virtual environment is activated
+source venv/bin/activate  # macOS/Linux
+venv\Scripts\activate     # Windows
+pip install -r requirements.txt
 ```
 
-- Backend: http://localhost:8000
-- Frontend: http://localhost:5173
+### Frontend Build Errors
+```bash
+cd frontend
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Port Already in Use
+```bash
+# Find and kill process on port 8000
+lsof -i :8000  # macOS/Linux
+kill -9 <PID>
+# Or use different port
+uvicorn app.main:app --port 8001
+```
+
+## Performance
+
+### Typical Response Times
+- Small repos (< 50 files): **20-40 seconds**
+- Medium repos (50-200 files): **40-70 seconds**
+- Large repos (200+ files): **60-90 seconds**
+
+### Optimizations
+- ✅ Parallel agent execution
+- ✅ Depth-limited repository traversal
+- ✅ File filtering (code files only)
+- ✅ Async I/O throughout
+
+## Limitations (MVP)
+
+- **Public Repos Only:** Requires GitHub token for private repos
+- **Rate Limits:** 60 GitHub requests/hour without token
+- **Processing Time:** 30-90 seconds per repository
+- **No Caching:** Each request regenerates documentation
+- **Synchronous:** Processes one request at a time
+
+## Project Structure
+
+See [PROJECT_TREE.md](PROJECT_TREE.md) for detailed file structure and navigation guide.
 
 ## Development
 
@@ -245,50 +318,6 @@ Hot module replacement enabled.
 cd backend
 pytest
 ```
-
-## System Design Highlights
-
-### Multi-Agent Architecture
-- **Orchestrator Pattern:** Central coordinator manages agent lifecycle
-- **Parallel Execution:** Agents 1 & 2 run simultaneously
-- **Error Isolation:** Agent failures don't crash the system
-
-### Performance Optimizations
-- Depth-limited repository traversal
-- File filtering (code files only)
-- Parallel documentation generation
-- Async I/O throughout
-
-### Scalability Considerations
-- Stateless design (easy to horizontally scale)
-- Ready for job queue integration
-- Cacheable results
-
-See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for comprehensive design documentation.
-
-## Common Issues
-
-### "GitHub API rate limit exceeded"
-- Add a GitHub token to `.env` for 5000 requests/hour
-- Generate at: https://github.com/settings/tokens
-
-### "Backend is not reachable"
-- Verify backend is running: `curl http://localhost:8000/api/v1/health`
-- Check that port 8000 is not in use
-
-### "Invalid API Key"
-- Verify `GEMINI_API_KEY` in `backend/.env`
-- Test at https://aistudio.google.com/apikey
-
-See [COMMON_PITFALLS.md](docs/COMMON_PITFALLS.md) for comprehensive troubleshooting.
-
-## Limitations (MVP)
-
-- **Public Repos Only:** Requires GitHub token for private repos
-- **Rate Limits:** 60 GitHub requests/hour without token
-- **Processing Time:** 30-90 seconds per repository
-- **No Caching:** Each request regenerates documentation
-- **Synchronous:** Processes one request at a time
 
 ## Future Enhancements
 
@@ -325,13 +354,6 @@ MIT License - see LICENSE file for details
 - Uses [PyGithub](https://github.com/PyGithub/PyGithub) for GitHub integration
 - Inspired by multi-agent AI system design patterns
 
-## Contact
-
-For issues or questions:
-- Open an issue on GitHub
-- Check [COMMON_PITFALLS.md](docs/COMMON_PITFALLS.md) for solutions
-- Review [API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md)
-
 ---
 
-**Note:** This is an MVP (Minimum Viable Product) designed to demonstrate multi-agent AI system design. It runs completely locally and uses free-tier APIs.
+**Note:** This is an MVP (Minimum Viable Product) designed to demonstrate multi-agent AI system design. It runs completely locally and uses free-tier APIs. Perfect for learning, experimentation, and portfolio projects.
